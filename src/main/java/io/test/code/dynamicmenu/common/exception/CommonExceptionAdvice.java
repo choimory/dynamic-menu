@@ -18,10 +18,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CommonExceptionAdvice {
     @ExceptionHandler({CommonException.class})
-    public ResponseEntity<CommonResponse<?>> commonException(CommonException e) {
-        return new ResponseEntity<>(CommonResponse.builder()
+    public ResponseEntity<CommonResponse<String>> commonException(CommonException e) {
+        return new ResponseEntity<>(CommonResponse.<String>builder()
                 .status(e.getStatus())
                 .message(e.getMessage())
+                .data(e.getDetail())
                 .build(), e.getHttpStatus());
     }
 
