@@ -7,7 +7,10 @@ create or replace table menu
     depth       int default 1 not null,
     title       varchar(255)  not null,
     link        text          not null,
-    description text          null
+    description text          null,
+    created_at  datetime      not null,
+    modified_at datetime      null,
+    deleted_at  datetime      null
 );
 
 create or replace index menu_depth_index
@@ -22,7 +25,10 @@ create or replace table banner
     title       varchar(255) null,
     link        text         null,
     description text         null,
-    image_path  text         null
+    image_path  text         null,
+    created_at  datetime      not null,
+    modified_at datetime      null,
+    deleted_at  datetime      null
 );
 
 create or replace index banner_menu_id_index
