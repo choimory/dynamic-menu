@@ -7,27 +7,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Menu extends CommonDateTimeEntity {
+public class Banner extends CommonDateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer depth;
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
     private String title;
     private String link;
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    private Menu parent;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
-    private List<Menu> children = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menu")
-    private List<Banner> banners = new ArrayList<>();
+    private String imagePath;
 }
