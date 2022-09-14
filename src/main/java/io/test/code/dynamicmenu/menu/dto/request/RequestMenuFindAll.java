@@ -8,4 +8,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class RequestMenuFindAll {
+    private final Long parentId;
+    private final String depth;
+    private final String title;
+    private final String link;
+    private final String description;
 }

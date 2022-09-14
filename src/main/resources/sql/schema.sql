@@ -19,16 +19,19 @@ create or replace index menu_depth_index
 -- banner
 create or replace table banner
 (
-    id          bigint auto_increment
+    id             bigint auto_increment
         primary key,
-    menu_id     bigint       null,
-    title       varchar(255) null,
-    link        text         null,
-    description text         null,
-    image_path  text         null,
-    created_at  datetime      not null,
-    modified_at datetime      null,
-    deleted_at  datetime      null
+    menu_id        bigint        null,
+    title          varchar(255)  null,
+    link           text          null,
+    description    text          null,
+    image_path     text          not null,
+    image_width    int           not null,
+    image_height   int           not null,
+    image_size     int           not null,
+    created_at     datetime      not null,
+    modified_at    datetime      null,
+    deleted_at     datetime      null
 );
 
 create or replace index banner_menu_id_index

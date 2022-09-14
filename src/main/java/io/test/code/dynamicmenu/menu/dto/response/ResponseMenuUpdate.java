@@ -1,4 +1,8 @@
 package io.test.code.dynamicmenu.menu.dto.response;
 
-public class ResponseMenuUpdate {
+import lombok.Getter;
+import org.springframework.hateoas.RepresentationModel;
+
+@Getter
+public class ResponseMenuUpdate extends RepresentationModel<ResponseMenuUpdate> {
 }

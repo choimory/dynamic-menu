@@ -1,13 +1,16 @@
 package io.test.code.dynamicmenu.menu.controller;
 
+import io.test.code.dynamicmenu.common.dto.request.CommonPageRequest;
+import io.test.code.dynamicmenu.menu.code.MenuDefaultSort;
+import io.test.code.dynamicmenu.menu.dto.request.RequestMenuFindAll;
+import io.test.code.dynamicmenu.menu.dto.request.RequestMenuRegist;
+import io.test.code.dynamicmenu.menu.dto.request.RequestMenuUpdate;
 import io.test.code.dynamicmenu.menu.dto.response.*;
 import io.test.code.dynamicmenu.menu.service.MenuService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Request;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -25,22 +28,31 @@ public class MenuController {
                                      @Valid
                                      @NotNull
                                      @Min(1) final Long id){
-        return null;
+        return menuService.find(id);
     }
 
-    public ResponseMenuFindAll findAll(){
-        return null;
+    @GetMapping("/search")
+    public ResponseMenuFindAll findAll(final RequestMenuFindAll param,
+                                       final CommonPageRequest pageRequest){
+        return menuService.findAll(param,
+                pageRequest.of(MenuDefaultSort.FIND_ALL.getProperty(), MenuDefaultSort.FIND_ALL.getDirection()));
     }
 
-    public ResponseMenuRegist regist(){
-        return null;
+    @PostMapping
+    public ResponseMenuRegist regist(@RequestBody final RequestMenuRegist param){
+        return menuService.regist(param);
     }
 
-    public ResponseMenuUpdate update(){
-        return null;
+    @PatchMapping
+    public ResponseMenuUpdate update(@RequestBody final RequestMenuUpdate param){
+        return menuService.update(param);
     }
 
-    public ResponseMenuDelete delete(){
-        return null;
+    @DeleteMapping("/{id}")
+    public ResponseMenuDelete delete(@PathVariable
+                                         @Valid
+                                         @NotNull
+                                         @Min(1) final Long id){
+        return menuService.delete(id);
     }
 }

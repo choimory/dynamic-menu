@@ -24,4 +24,7 @@ public class Banner extends CommonDateTimeEntity {
     private String link;
     private String description;
     private String imagePath;
+    private Integer imageWidth;
+    private Integer imageHeight;
+    private Integer imageSize;
 }
