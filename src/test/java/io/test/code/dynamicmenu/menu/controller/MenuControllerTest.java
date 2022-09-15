@@ -6,6 +6,7 @@ import io.test.code.dynamicmenu.menu.dto.request.RequestMenuFindAll;
 import io.test.code.dynamicmenu.menu.dto.request.RequestMenuRegist;
 import io.test.code.dynamicmenu.menu.dto.request.RequestMenuUpdate;
 import io.test.code.dynamicmenu.menu.dto.response.ResponseMenuRegist;
+import io.test.code.dynamicmenu.menu.dto.response.ResponseMenuUpdate;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -122,6 +123,11 @@ class MenuControllerTest {
             case OK:
                 when.andExpect(status().is(httpStatus.value()))
                         .andExpect(jsonPath("registedMenu").isNotEmpty())
+                        .andExpect(jsonPath("registedMenu.depth").value(result.getRegistedMenu().getParent().getDepth() + 1))
+                        .andExpect(jsonPath("registedMenu.title").value(param.getTitle()))
+                        .andExpect(jsonPath("registedMenu.link").value(param.getLink()))
+                        .andExpect(jsonPath("registedMenu.description").value(param.getDescription()))
+                        .andExpect(jsonPath("registedMenu.parent.id").value(param.getParentId()))
                         .andExpect(jsonPath("_links.self.href").value("/menu"))
                         .andExpect(jsonPath("_links.find.href").value(String.format("/menu/%d", result.getRegistedMenu().getId())))
                         .andExpect(jsonPath("_links.find-all.href").value("/menu/search"))
@@ -147,11 +153,18 @@ class MenuControllerTest {
                         .content(objectMapper.writeValueAsString(param)))
                 .andDo(print());
 
+        ResponseMenuUpdate result = objectMapper.readValue(when.andReturn().getResponse().getContentAsString(), ResponseMenuUpdate.class);
+
         /*then*/
         switch (httpStatus == null ? HttpStatus.OK : httpStatus){
             case OK:
                 when.andExpect(status().is(httpStatus.value()))
                         .andExpect(jsonPath("updatedMenu").isNotEmpty())
+                        .andExpect(jsonPath("updatedMenu.depth").value(result.getUpdatedMenu().getParent().getDepth() + 1))
+                        .andExpect(jsonPath("updatedMenu.title").value(param.getTitle()))
+                        .andExpect(jsonPath("updatedMenu.link").value(param.getLink()))
+                        .andExpect(jsonPath("updatedMenu.description").value(param.getDescription()))
+                        .andExpect(jsonPath("updatedMenu.parent.id").value(param.getParentId()))
                         .andExpect(jsonPath("_links.self.href").value(String.format("/menu/%d", id)))
                         .andExpect(jsonPath("_links.find.href").value(String.format("/menu/%d", id)))
                         .andExpect(jsonPath("_links.delete.href").value(String.format("/menu/%d", id)));
@@ -187,9 +200,9 @@ class MenuControllerTest {
                 //성공
                 .add(Arguments.of(RequestMenuRegist.builder()
                                 .parentId(1L)
-                                .title("메뉴등록 테스트")
+                                .title("테스트 메뉴")
                                 .link("naver.com")
-                                .description("")
+                                .description("테스트코드용 메뉴입니다")
                                 .build(),
                         HttpStatus.CREATED))
                 //필수값 미입력
