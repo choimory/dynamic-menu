@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.naming.AuthenticationException;
+import javax.naming.NotContextException;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,9 +18,30 @@ import java.util.stream.Collectors;
 @RestControllerAdvice("io.test.code.dynamicmenu")
 @Slf4j
 public class CommonExceptionAdvice {
+    @ExceptionHandler({Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResponse<String> exception(Exception e) {
+        e.printStackTrace();
+        return CommonResponse.<String>builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .data(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler({RuntimeException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResponse<String> runtimeException(Exception e) {
+        e.printStackTrace();
+        return CommonResponse.<String>builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .data(e.getMessage())
+                .build();
+    }
     @ExceptionHandler({CommonException.class})
-    public ResponseEntity<CommonResponse<String>> commonException(CommonException e) {
-        return new ResponseEntity<>(CommonResponse.<String>builder()
+    public ResponseEntity<CommonResponse<?>> commonException(CommonException e) {
+        return new ResponseEntity<>(CommonResponse.builder()
                 .status(e.getErrorCode())
                 .message(e.getErrorMessage())
                 .data(e.getDetail())

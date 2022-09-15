@@ -24,10 +24,10 @@ public class MenuService {
     public ResponseMenuFind find(final Long id){
         /*조회*/
         Menu menu = menuRepository.findById(id)
-                .orElseThrow(() -> new CommonException(HttpStatus.NO_CONTENT,
-                        HttpStatus.NO_CONTENT.value(),
-                        HttpStatus.NO_CONTENT.getReasonPhrase(),
-                        HttpStatus.NO_CONTENT.getReasonPhrase()));
+                .orElseThrow(() -> new CommonException(HttpStatus.NOT_FOUND,
+                        HttpStatus.NOT_FOUND.value(),
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
+                        HttpStatus.NOT_FOUND.getReasonPhrase()));
 
         /*반환*/
         return ResponseMenuFind.builder()
@@ -40,7 +40,9 @@ public class MenuService {
         /*변환*/
         /*반환*/
 
-        return null;
+        return ResponseMenuFindAll.builder()
+                .menus(null)
+                .build();
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)

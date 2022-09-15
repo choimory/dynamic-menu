@@ -49,12 +49,10 @@ class MenuControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("sourceForFind")
     @DisplayName("단일조회_테스트")
-    void find() throws Exception{
-        /*given*/
-        Long id = 1L;
-
+    void find(Long id, HttpStatus httpStatus) throws Exception{
         /*when*/
         ResultActions when = mockMvc.perform(get("/menu/{id}", id)
                 .contentType(APPLICATION_JSON)
@@ -62,13 +60,28 @@ class MenuControllerTest {
                 .andDo(print());
 
         /*then*/
-        when.andExpect(status().isOk())
-                .andExpect(jsonPath("menu").exists())
-                .andExpect(jsonPath("menu.id").value(id))
-                .andExpect(jsonPath("_links").exists())
-                .andExpect(jsonPath("_links.self.href", Matchers.endsWith(String.format("/menu/%d", id))))
-                .andExpect(jsonPath("_links.update.href", Matchers.endsWith(String.format("/menu/%d", id))))
-                .andExpect(jsonPath("_links.delete.href", Matchers.endsWith(String.format("/menu/%d", id))));
+        switch (httpStatus == null ? HttpStatus.OK : httpStatus){
+            case OK:
+                when.andExpect(status().isOk())
+                        .andExpect(jsonPath("menu").exists())
+                        .andExpect(jsonPath("menu.id").value(id))
+                        .andExpect(jsonPath("_links").exists())
+                        .andExpect(jsonPath("_links.self.href", Matchers.endsWith(String.format("/menu/%d", id))))
+                        .andExpect(jsonPath("_links.update.href", Matchers.endsWith(String.format("/menu/%d", id))))
+                        .andExpect(jsonPath("_links.delete.href", Matchers.endsWith(String.format("/menu/%d", id))));
+                break;
+            case NOT_FOUND:
+                when.andExpect(status().is(httpStatus.value()))
+                        .andExpect(jsonPath("status").value(httpStatus.value()))
+                        .andExpect(jsonPath("message").value(httpStatus.getReasonPhrase()));
+                break;
+            case BAD_REQUEST:
+                when.andExpect(status().is(httpStatus.value()))
+                        .andExpect(jsonPath("data[0].field").exists())
+                        .andExpect(jsonPath("data[0].rejectedValue").exists())
+                        .andExpect(jsonPath("data[0].message").exists());
+                break;
+        }
     }
 
     @Test
@@ -193,6 +206,14 @@ class MenuControllerTest {
         when.andExpect(status().isOk())
                 .andExpect(jsonPath("_links.self.href").value(String.format("/menu/%d", id)))
                 .andExpect(jsonPath("_links.find-all.href", Matchers.endsWith("/menu/search")));
+    }
+
+    static Stream<Arguments> sourceForFind(){
+        return Stream.<Arguments>builder()
+                .add(Arguments.of(1L, HttpStatus.OK))
+                .add(Arguments.of(-1L, HttpStatus.BAD_REQUEST))
+                .add(Arguments.of(9999999999L, HttpStatus.NOT_FOUND))
+                .build();
     }
 
     static Stream<Arguments> sourceForRegist(){
