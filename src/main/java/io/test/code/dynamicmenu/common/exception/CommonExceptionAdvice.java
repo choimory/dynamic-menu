@@ -20,8 +20,8 @@ public class CommonExceptionAdvice {
     @ExceptionHandler({CommonException.class})
     public ResponseEntity<CommonResponse<String>> commonException(CommonException e) {
         return new ResponseEntity<>(CommonResponse.<String>builder()
-                .status(e.getStatus())
-                .message(e.getMessage())
+                .status(e.getErrorCode())
+                .message(e.getErrorMessage())
                 .data(e.getDetail())
                 .build(), e.getHttpStatus());
     }
