@@ -42,4 +42,8 @@ public class Banner extends CommonDateTimeEntity {
         this.imageHeight = imageHeight;
         this.imageSize = imageSize;
     }
+
+    public void delete(){
+        this.deletedAt = LocalDateTime.now();
+    }
 }

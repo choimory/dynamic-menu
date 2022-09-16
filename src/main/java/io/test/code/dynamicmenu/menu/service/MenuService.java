@@ -87,18 +87,18 @@ public class MenuService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public ResponseMenuDelete delete(final Long id){
         /*조회*/
-        Menu menu = menuRepository.findByIdAndDeletedAtIsNull(id)
+        Menu deletedMenu = menuRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new CommonException(HttpStatus.NOT_FOUND,
                         HttpStatus.NOT_FOUND.value(),
                         HttpStatus.NOT_FOUND.getReasonPhrase(),
                         HttpStatus.NOT_FOUND.getReasonPhrase()));
 
-        /*삭제*/
-        Menu deletedMenu = menuRepository.save(menu.toBuilder()
-                .deletedAt(LocalDateTime.now())
-                .build());
+        /*대상 및 하위 메뉴 일괄 삭제*/
+        deletedMenu.delete();
 
         /*반환*/
-        return null;
+        return ResponseMenuDelete.builder()
+                .deletedMenu(MenuDto.toDto(deletedMenu))
+                .build();
     }
 }

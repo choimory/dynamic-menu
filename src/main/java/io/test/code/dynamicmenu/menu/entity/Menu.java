@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor
@@ -34,7 +35,7 @@ public class Menu extends CommonDateTimeEntity {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Menu parent;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> children = new ArrayList<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Banner> banners = new ArrayList<>();
@@ -55,5 +56,11 @@ public class Menu extends CommonDateTimeEntity {
     public Menu regist(List<Banner> banners){
         this.banners = banners;
         return this;
+    }
+
+    public void delete(){
+        this.deletedAt = LocalDateTime.now();
+        this.banners.forEach(Banner::delete);
+        this.children.forEach(Menu::delete);
     }
 }

@@ -31,7 +31,8 @@ public class QMenuRepositoryImpl implements QMenuRepository{
     public Boolean existByTitleAmongChild(String title, Long parentId) {
         Integer result = query.selectOne()
                 .from(menu)
-                .where(eqTitleAndParentId(title, parentId))
+                .where(eqTitleAndParentId(title, parentId)
+                        .and(menu.deletedAt.isNull()))
                 .fetchFirst();
 
         return result != null;

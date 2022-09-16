@@ -198,11 +198,9 @@ class MenuControllerTest {
         }
     }
 
-    @Test
-    void delete() throws Exception {
-        /*given*/
-        Long id = 1L;
-
+    @ParameterizedTest
+    @MethodSource("sourceForDelete")
+    void delete(Long id, HttpStatus httpStatus) throws Exception {
         /*when*/
         ResultActions when = mockMvc.perform(MockMvcRequestBuilders.delete("/menu/{id}", id)
                 .contentType(APPLICATION_JSON)
@@ -210,9 +208,18 @@ class MenuControllerTest {
                 .andDo(print());
 
         /*then*/
-        when.andExpect(status().isOk())
-                .andExpect(jsonPath("_links.self.href").value(String.format("/menu/%d", id)))
-                .andExpect(jsonPath("_links.find-all.href", Matchers.endsWith("/menu/search")));
+        switch (httpStatus == null ? HttpStatus.OK : httpStatus){
+            case OK:
+                when.andExpect(status().is(httpStatus.value()))
+                        .andExpect(jsonPath("_links.self.href", Matchers.endsWith(String.format("/menu/%d", id))))
+                        .andExpect(jsonPath("_links.find-all.href", Matchers.endsWith("/menu/search")));
+                break;
+            case NOT_FOUND:
+                when.andExpect(status().is(httpStatus.value()))
+                        .andExpect(jsonPath("status").value(httpStatus.value()))
+                        .andExpect(jsonPath("message").value(httpStatus.getReasonPhrase()));;
+                break;
+        }
     }
 
     static Stream<Arguments> sourceForFind(){
@@ -308,6 +315,15 @@ class MenuControllerTest {
                 .add(Arguments.of(RequestMenuUpdate.builder()
                                 .build(),
                         HttpStatus.BAD_REQUEST))
+                .build();
+    }
+
+    static Stream<Arguments> sourceForDelete(){
+        return Stream.<Arguments>builder()
+                //성공
+                .add(Arguments.of(1L, HttpStatus.OK))
+                //없는 경우
+                .add(Arguments.of(9999L, HttpStatus.NOT_FOUND))
                 .build();
     }
 }
