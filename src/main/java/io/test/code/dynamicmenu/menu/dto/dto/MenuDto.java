@@ -35,11 +35,15 @@ public class MenuDto {
                 .link(menu.getLink())
                 .description(menu.getDescription())
                 .parent(ParentMenuDto.toDto(menu.getParent()))
-                .children(menu.getChildren()
+                .children(menu.getChildren() == null
+                        ? null
+                        : menu.getChildren()
                         .stream()
                         .map(ChildMenuDto::toDto)
                         .collect(Collectors.toUnmodifiableList()))
-                .banners(menu.getBanners()
+                .banners(menu.getBanners() == null
+                        ? null
+                        : menu.getBanners()
                         .stream()
                         .map(BannerDto::toDto)
                         .collect(Collectors.toUnmodifiableList()))
@@ -69,7 +73,9 @@ public class MenuDto {
                     .link(menu.getLink())
                     .description(menu.getDescription())
                     .parent(ParentMenuDto.toDto(menu.getParent()))
-                    .banners(menu.getBanners()
+                    .banners(menu.getBanners() == null
+                            ? null
+                            : menu.getBanners()
                             .stream()
                             .map(BannerDto::toDto)
                             .collect(Collectors.toUnmodifiableList()))
@@ -99,11 +105,15 @@ public class MenuDto {
                     .title(menu.getTitle())
                     .link(menu.getLink())
                     .description(menu.getDescription())
-                    .children(menu.getChildren()
+                    .children(menu.getChildren() == null
+                            ? null
+                            : menu.getChildren()
                             .stream()
                             .map(ChildMenuDto::toDto)
                             .collect(Collectors.toUnmodifiableList()))
-                    .banners(menu.getBanners()
+                    .banners(menu.getBanners() == null
+                            ? null
+                            : menu.getBanners()
                             .stream()
                             .map(BannerDto::toDto)
                             .collect(Collectors.toUnmodifiableList()))

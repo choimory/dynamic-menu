@@ -5,6 +5,7 @@ import io.test.code.dynamicmenu.common.dto.response.CommonResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -60,6 +61,23 @@ public class CommonExceptionAdvice {
                                 .field(constraintViolation.getPropertyPath().toString())
                                 .rejectedValue(constraintViolation.getInvalidValue())
                                 .message(constraintViolation.getMessage())
+                                .build())
+                        .collect(Collectors.toUnmodifiableList()))
+                .build();
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResponse<List<CommonNotValidResponse>> methodArgumentNotValidException(MethodArgumentNotValidException e){
+        return CommonResponse.<List<CommonNotValidResponse>>builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .data(e.getFieldErrors()
+                        .stream()
+                        .map(fieldError -> CommonNotValidResponse.builder()
+                                .field(fieldError.getField())
+                                .rejectedValue(fieldError.getRejectedValue())
+                                .message(fieldError.getDefaultMessage())
                                 .build())
                         .collect(Collectors.toUnmodifiableList()))
                 .build();

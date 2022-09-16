@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,6 +37,11 @@ public class Menu extends CommonDateTimeEntity {
     private Menu parent;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
     private List<Menu> children = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menu")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Banner> banners = new ArrayList<>();
+
+    public Menu regist(List<Banner> banners){
+        this.banners = banners;
+        return this;
+    }
 }

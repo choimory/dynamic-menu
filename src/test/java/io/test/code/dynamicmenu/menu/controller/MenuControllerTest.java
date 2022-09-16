@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -122,8 +123,8 @@ class MenuControllerTest {
     void regist(RequestMenuRegist param, HttpStatus httpStatus) throws Exception {
         /*when*/
         ResultActions when = mockMvc.perform(post("/menu")
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(param)))
                 .andDo(print());
 
@@ -149,9 +150,15 @@ class MenuControllerTest {
                 break;
             case BAD_REQUEST:
                 when.andExpect(status().is(httpStatus.value()))
-                        .andExpect(jsonPath("data.field").isNotEmpty())
-                        .andExpect(jsonPath("data.rejectedValue").isNotEmpty())
-                        .andExpect(jsonPath("data.message").isNotEmpty());
+                        .andExpect(jsonPath("data[0].field").isNotEmpty())
+                        .andExpect(jsonPath("data[0].rejectedValue").hasJsonPath())
+                        .andExpect(jsonPath("data[0].message").isNotEmpty());
+                break;
+            case CONFLICT:
+                when.andExpect(status().is(httpStatus.value()))
+                        .andExpect(jsonPath("status").value(HttpStatus.CONFLICT.value()))
+                        .andExpect(jsonPath("message").value(HttpStatus.CONFLICT.getReasonPhrase()))
+                        .andExpect(jsonPath("data").value(HttpStatus.CONFLICT.getReasonPhrase()));
                 break;
         }
     }
@@ -218,18 +225,70 @@ class MenuControllerTest {
 
     static Stream<Arguments> sourceForRegist(){
         return Stream.<Arguments>builder()
-                //성공
+                //루트 등록 성공
+                .add(Arguments.of(RequestMenuRegist.builder()
+                                .title("테스트 메뉴")
+                                .link("naver.com")
+                                .description("테스트코드용 메뉴입니다")
+                                .banners(List.of(RequestMenuRegist.RequestBanner.builder()
+                                        .title("테스트 배너")
+                                        .link("naver.com")
+                                        .imagePath("/foo/bar/abc.jpg")
+                                        .imageHeight(123)
+                                        .imageWidth(123)
+                                        .imageSize(123)
+                                        .build()))
+                                .build(),
+                        HttpStatus.CREATED))
+                //하위 등록 성공
                 .add(Arguments.of(RequestMenuRegist.builder()
                                 .parentId(1L)
                                 .title("테스트 메뉴")
                                 .link("naver.com")
                                 .description("테스트코드용 메뉴입니다")
+                                .banners(List.of(RequestMenuRegist.RequestBanner.builder()
+                                        .title("테스트 배너")
+                                        .link("naver.com")
+                                        .imagePath("/foo/bar/abc.jpg")
+                                        .imageHeight(123)
+                                        .imageWidth(123)
+                                        .imageSize(123)
+                                        .build()))
                                 .build(),
                         HttpStatus.CREATED))
+                //배너 필수값 검증
+                .add(Arguments.of(RequestMenuRegist.builder()
+                                .parentId(1L)
+                                .title("테스트 메뉴")
+                                .link("naver.com")
+                                .description("테스트코드용 메뉴입니다")
+                                .banners(List.of(RequestMenuRegist.RequestBanner.builder()
+                                        .imagePath("/foo/bar/abc.jpg")
+                                        .imageHeight(123)
+                                        .imageWidth(123)
+                                        .imageSize(123)
+                                        .build()))
+                                .build(),
+                        HttpStatus.BAD_REQUEST))
                 //필수값 미입력
                 .add(Arguments.of(RequestMenuRegist.builder()
                                 .build(),
                         HttpStatus.BAD_REQUEST))
+                //부모 중복
+                .add(Arguments.of(RequestMenuRegist.builder()
+                                .title("루트-1")
+                                .link("naver.com")
+                                .description("테스트코드용 메뉴입니다")
+                                .build(),
+                        HttpStatus.CONFLICT))
+                //자식 중복
+                .add(Arguments.of(RequestMenuRegist.builder()
+                                .parentId(1L)
+                                .title("2층-1")
+                                .link("naver.com")
+                                .description("테스트코드용 메뉴입니다")
+                                .build(),
+                        HttpStatus.CONFLICT))
                 .build();
     }
 

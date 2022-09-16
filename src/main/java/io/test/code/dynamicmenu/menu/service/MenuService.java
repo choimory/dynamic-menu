@@ -8,6 +8,7 @@ import io.test.code.dynamicmenu.menu.dto.request.RequestMenuUpdate;
 import io.test.code.dynamicmenu.menu.dto.response.*;
 import io.test.code.dynamicmenu.menu.entity.Menu;
 import io.test.code.dynamicmenu.menu.repository.MenuRepository;
+import io.test.code.dynamicmenu.menu.valid.MenuValid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -47,14 +48,30 @@ public class MenuService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public ResponseMenuRegist regist(final RequestMenuRegist param){
-        /*중복조회 - 동일 뎁스의 동일 메뉴명*/
-        //존재시 취소
+        /*자식간의 동일 메뉴명 중복 조회*/
+        if(menuRepository.existByTitleAmongChild(param.getTitle(), param.getParentId())){
+            throw new CommonException(HttpStatus.CONFLICT,
+                    HttpStatus.CONFLICT.value(),
+                    HttpStatus.CONFLICT.getReasonPhrase(),
+                    HttpStatus.CONFLICT.getReasonPhrase());
+        }
+
+        /*뎁스 계산*/
+        final int calculatedDepth = param.getParentId() == null
+                ? 1
+                : menuRepository.findDepthById(param.getParentId())
+                .orElseThrow(() -> new CommonException(HttpStatus.NOT_FOUND,
+                        MenuValid.CODE_PARENT_NOT_FOUND,
+                        MenuValid.MESSAGE_PARENT_NOT_FOUND,
+                        MenuValid.MESSAGE_PARENT_NOT_FOUND)) + 1;
 
         /*등록*/
-        /*변환*/
-        /*반환*/
+        Menu registed = menuRepository.save(param.toEntity(calculatedDepth));
 
-        return null;
+        /*반환*/
+        return ResponseMenuRegist.builder()
+                .registedMenu(MenuDto.toDto(registed))
+                .build();
     }
 
     public ResponseMenuUpdate update(final RequestMenuUpdate param){

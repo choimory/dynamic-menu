@@ -39,12 +39,12 @@ public class MenuController {
     }
 
     @PostMapping
-    public ResponseMenuRegist regist(@RequestBody final RequestMenuRegist param){
+    public ResponseMenuRegist regist(@RequestBody @Valid final RequestMenuRegist param){
         return menuService.regist(param);
     }
 
     @PatchMapping
-    public ResponseMenuUpdate update(@RequestBody final RequestMenuUpdate param){
+    public ResponseMenuUpdate update(@RequestBody @Valid final RequestMenuUpdate param){
         return menuService.update(param);
     }
 
