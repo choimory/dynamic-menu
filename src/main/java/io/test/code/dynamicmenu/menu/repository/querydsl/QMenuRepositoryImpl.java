@@ -8,10 +8,14 @@ import io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpress
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static io.test.code.dynamicmenu.menu.entity.QMenu.menu;
+import static io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression.containsTitle;
+import static io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression.eqParentId;
 import static io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression.eqTitleAndParentId;
+import static io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression.gtLastId;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,5 +40,22 @@ public class QMenuRepositoryImpl implements QMenuRepository{
                 .fetchFirst();
 
         return result != null;
+    }
+
+    @Override
+    public List<MenuDto> findAllNoOffset(Long lastId, Long parentId, String title, int size) {
+        return query.select(
+                Projections.fields(
+                        MenuDto.class,
+                        menu.id,
+                        menu.title,
+                        menu.link,
+                        menu.description))
+                .from(menu)
+                .where(gtLastId(lastId),
+                        eqParentId(parentId),
+                        containsTitle(title))
+                .limit(size)
+                .fetch();
     }
 }

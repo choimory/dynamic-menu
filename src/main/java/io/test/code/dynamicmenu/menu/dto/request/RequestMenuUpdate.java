@@ -1,10 +1,12 @@
 package io.test.code.dynamicmenu.menu.dto.request;
 
+import io.test.code.dynamicmenu.menu.entity.Menu;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Null;
 
 @Builder(toBuilder = true)
 @RequiredArgsConstructor
@@ -16,4 +18,18 @@ public class RequestMenuUpdate {
     @NotEmpty
     private final String link;
     private final String description;
+
+    public Menu toEntity(int calculatedDepth){
+        return Menu.builder()
+                .title(title)
+                .depth(calculatedDepth)
+                .link(link)
+                .description(description)
+                .parent(parentId == null
+                        ? null
+                        : Menu.builder()
+                        .id(parentId)
+                        .build())
+                .build();
+    }
 }

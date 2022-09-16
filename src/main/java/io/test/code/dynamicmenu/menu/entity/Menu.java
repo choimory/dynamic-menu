@@ -1,11 +1,10 @@
 package io.test.code.dynamicmenu.menu.entity;
 
 import io.test.code.dynamicmenu.common.entity.CommonDateTimeEntity;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -19,9 +18,9 @@ import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
+@DynamicUpdate
 @NoArgsConstructor
 @Getter
 public class Menu extends CommonDateTimeEntity {
@@ -53,14 +52,28 @@ public class Menu extends CommonDateTimeEntity {
         this.banners = banners;
     }
 
-    public Menu regist(List<Banner> banners){
+    public Menu regist(List<Banner> banners) {
         this.banners = banners;
         return this;
     }
 
-    public void delete(){
+    public void update(Menu toUpdate) {
+        this.depth = toUpdate.depth;
+        this.title = toUpdate.title;
+        this.link = toUpdate.link;
+        this.description = toUpdate.description;
+        this.parent = toUpdate.parent;
+        this.children.forEach(menu -> menu.updateChild(toUpdate.depth + 1));
+    }
+
+    public void delete() {
         this.deletedAt = LocalDateTime.now();
         this.banners.forEach(Banner::delete);
         this.children.forEach(Menu::delete);
+    }
+
+    private void updateChild(int depth) {
+        this.parent = null;
+        this.depth = depth;
     }
 }

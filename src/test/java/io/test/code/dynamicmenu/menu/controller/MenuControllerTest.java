@@ -110,11 +110,8 @@ class MenuControllerTest {
 
         /*then*/
         when.andExpect(status().isOk())
-                .andExpect(jsonPath("page").value(page))
                 .andExpect(jsonPath("size").value(size))
-                .andExpect(jsonPath("sort").value(sort))
                 .andExpect(jsonPath("_links.self.href", Matchers.endsWith("/menu/search")))
-                .andExpect(jsonPath("_links.prev-page.href",Matchers.containsString("/menu/search")))
                 .andExpect(jsonPath("_links.next-page.href", Matchers.containsString("/menu/search")));
     }
 
@@ -311,6 +308,11 @@ class MenuControllerTest {
                         RequestMenuUpdate.builder()
                                 .build(),
                         HttpStatus.BAD_REQUEST))
+                //없는 ID
+                .add(Arguments.of(99999L,
+                        RequestMenuUpdate.builder()
+                                .build(),
+                        HttpStatus.NOT_FOUND))
                 //필수값 미입력
                 .add(Arguments.of(RequestMenuUpdate.builder()
                                 .build(),

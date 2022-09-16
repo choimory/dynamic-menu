@@ -1,28 +1,35 @@
 package io.test.code.dynamicmenu.menu.dto.response;
 
+import io.test.code.dynamicmenu.menu.controller.MenuController;
 import io.test.code.dynamicmenu.menu.dto.dto.MenuDto;
+import io.test.code.dynamicmenu.menu.dto.request.RequestMenuFindAll;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import java.util.List;
+import java.util.Map;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @Getter
 public class ResponseMenuFindAll extends RepresentationModel<ResponseMenuFindAll> {
-    private int page;
-    private int totalCount;
-    private int totalPage;
+    private Long lastId;
     private int size;
-    private String sort;
     private List<MenuDto> menus;
 
     @Builder
-    public ResponseMenuFindAll(int page, int totalCount, int totalPage, int size, String sort, List<MenuDto> menus) {
-        this.page = page;
-        this.totalCount = totalCount;
-        this.totalPage = totalPage;
+    public ResponseMenuFindAll(Long lastId, int size, List<MenuDto> menus) {
+        this.lastId = lastId;
         this.size = size;
-        this.sort = sort;
         this.menus = menus;
+        //TODO 파라미터 동적 추가
+        //add(Link.of("/menu/search{?title,parentId}").expand(Map.of("title","ttt","parentId",1L)));
+        //add(Link.of("/menu/search{?title,parentId}").expand(Map.of("title","ttt")));
+        //add(Link.of("/menu/search{?title,parentId}").expand(RequestMenuFindAll.builder().parentId(1L).title("ttt").build()));
+        add(linkTo(methodOn(MenuController.class).findAll(RequestMenuFindAll.builder().title("ttt").build(), null)).withSelfRel().expand());
+        add(linkTo(MenuController.class).slash("/id").withRel("find"));
     }
 }

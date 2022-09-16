@@ -43,9 +43,14 @@ public class MenuController {
         return menuService.regist(param);
     }
 
-    @PatchMapping
-    public ResponseMenuUpdate update(@RequestBody @Valid final RequestMenuUpdate param){
-        return menuService.update(param);
+    @PatchMapping("/{id}")
+    public ResponseMenuUpdate update(@PathVariable
+                                         @Valid
+                                         @NotNull
+                                         @Min(1) final Long id,
+                                     @RequestBody
+                                     @Valid final RequestMenuUpdate param){
+        return menuService.update(id, param);
     }
 
     @DeleteMapping("/{id}")
