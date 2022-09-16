@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -24,7 +26,7 @@ public class MenuService {
 
     public ResponseMenuFind find(final Long id){
         /*조회*/
-        Menu menu = menuRepository.findById(id)
+        Menu menu = menuRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new CommonException(HttpStatus.NOT_FOUND,
                         HttpStatus.NOT_FOUND.value(),
                         HttpStatus.NOT_FOUND.getReasonPhrase(),
@@ -74,6 +76,7 @@ public class MenuService {
                 .build();
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public ResponseMenuUpdate update(final RequestMenuUpdate param){
         /*수정*/
         /*변환*/
@@ -81,8 +84,20 @@ public class MenuService {
         return null;
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public ResponseMenuDelete delete(final Long id){
+        /*조회*/
+        Menu menu = menuRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new CommonException(HttpStatus.NOT_FOUND,
+                        HttpStatus.NOT_FOUND.value(),
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
+                        HttpStatus.NOT_FOUND.getReasonPhrase()));
+
         /*삭제*/
+        Menu deletedMenu = menuRepository.save(menu.toBuilder()
+                .deletedAt(LocalDateTime.now())
+                .build());
+
         /*반환*/
         return null;
     }

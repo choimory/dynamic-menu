@@ -6,13 +6,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Builder(toBuilder = true)
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class Banner extends CommonDateTimeEntity {
     @Id
@@ -28,4 +28,18 @@ public class Banner extends CommonDateTimeEntity {
     private Integer imageWidth;
     private Integer imageHeight;
     private Integer imageSize;
+
+    @Builder(toBuilder = true)
+    public Banner(LocalDateTime createdAt, LocalDateTime modifiedAt, LocalDateTime deletedAt, Long id, Menu menu, String title, String link, String description, String imagePath, Integer imageWidth, Integer imageHeight, Integer imageSize) {
+        super(createdAt, modifiedAt, deletedAt);
+        this.id = id;
+        this.menu = menu;
+        this.title = title;
+        this.link = link;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
+        this.imageSize = imageSize;
+    }
 }

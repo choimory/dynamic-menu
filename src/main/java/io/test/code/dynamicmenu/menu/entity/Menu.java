@@ -16,13 +16,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Builder(toBuilder = true)
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class Menu extends CommonDateTimeEntity {
     @Id
@@ -39,6 +38,19 @@ public class Menu extends CommonDateTimeEntity {
     private List<Menu> children = new ArrayList<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Banner> banners = new ArrayList<>();
+
+    @Builder(toBuilder = true)
+    public Menu(LocalDateTime createdAt, LocalDateTime modifiedAt, LocalDateTime deletedAt, Long id, Integer depth, String title, String link, String description, Menu parent, List<Menu> children, List<Banner> banners) {
+        super(createdAt, modifiedAt, deletedAt);
+        this.id = id;
+        this.depth = depth;
+        this.title = title;
+        this.link = link;
+        this.description = description;
+        this.parent = parent;
+        this.children = children;
+        this.banners = banners;
+    }
 
     public Menu regist(List<Banner> banners){
         this.banners = banners;
