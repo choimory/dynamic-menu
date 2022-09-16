@@ -61,13 +61,10 @@ public class RequestMenuRegist {
         @NotEmpty
         private final String imagePath;
         @NotNull
-        @NotEmpty
         private final Integer imageWidth;
         @NotNull
-        @NotEmpty
         private final Integer imageHeight;
         @NotNull
-        @NotEmpty
         private final Integer imageSize;
 
         public static Banner toEntity(RequestBanner banner, Menu menu){
