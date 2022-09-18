@@ -111,7 +111,6 @@ class MenuControllerTest {
         when.andExpect(status().isOk())
                 .andExpect(jsonPath("size").value(size))
                 .andExpect(jsonPath("_links.self.href", Matchers.endsWith("/menu/search")));
-                //.andExpect(jsonPath("_links.next-page.href", Matchers.containsString("/menu/search")));
     }
 
     @ParameterizedTest
@@ -178,11 +177,9 @@ class MenuControllerTest {
             case OK:
                 when.andExpect(status().is(httpStatus.value()))
                         .andExpect(jsonPath("updatedMenu").isNotEmpty())
-                        //.andExpect(jsonPath("updatedMenu.depth").value(result.getUpdatedMenu().getParent().getDepth() + 1))
                         .andExpect(jsonPath("updatedMenu.title").value(param.getTitle()))
                         .andExpect(jsonPath("updatedMenu.link").value(param.getLink()))
                         .andExpect(jsonPath("updatedMenu.description").value(param.getDescription()))
-                        //.andExpect(jsonPath("updatedMenu.parent.id").value(param.getParentId()))
                         .andExpect(jsonPath("_links.self.href", Matchers.endsWith(String.format("/menu/%d", id))))
                         .andExpect(jsonPath("_links.find.href", Matchers.endsWith(String.format("/menu/%d", id))))
                         .andExpect(jsonPath("_links.delete.href", Matchers.endsWith(String.format("/menu/%d", id))));
