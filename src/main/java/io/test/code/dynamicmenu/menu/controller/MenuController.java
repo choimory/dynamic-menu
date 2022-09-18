@@ -31,7 +31,7 @@ public class MenuController {
         return menuService.find(id);
     }
 
-    @GetMapping("/search")
+    @GetMapping
     public ResponseMenuFindAll findAll(final RequestMenuFindAll param,
                                        final CommonPageRequest pageRequest){
         return menuService.findAll(param,
