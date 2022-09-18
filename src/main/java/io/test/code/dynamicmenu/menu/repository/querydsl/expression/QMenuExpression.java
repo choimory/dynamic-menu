@@ -22,7 +22,7 @@ public class QMenuExpression {
 
     public static BooleanExpression eqParentId(Long parentId){
         return parentId == null
-                ? menu.parent.id.isNull()
+                ? null
                 : menu.parent.id.eq(parentId);
     }
 

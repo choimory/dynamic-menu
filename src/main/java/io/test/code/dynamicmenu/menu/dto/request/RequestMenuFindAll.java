@@ -10,5 +10,6 @@ import lombok.RequiredArgsConstructor;
 public class RequestMenuFindAll {
     private final Long lastId;
     private final Long parentId;
+    private final Integer depth;
     private final String title;
 }

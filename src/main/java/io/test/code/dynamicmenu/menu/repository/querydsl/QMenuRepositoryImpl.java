@@ -3,8 +3,6 @@ package io.test.code.dynamicmenu.menu.repository.querydsl;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.test.code.dynamicmenu.menu.dto.dto.MenuDto;
-import io.test.code.dynamicmenu.menu.entity.QMenu;
-import io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,10 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static io.test.code.dynamicmenu.menu.entity.QMenu.menu;
-import static io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression.containsTitle;
-import static io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression.eqParentId;
-import static io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression.eqTitleAndParentId;
-import static io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression.gtLastId;
+import static io.test.code.dynamicmenu.menu.repository.querydsl.expression.QMenuExpression.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,7 +38,7 @@ public class QMenuRepositoryImpl implements QMenuRepository{
     }
 
     @Override
-    public List<MenuDto> findAllNoOffset(Long lastId, Long parentId, String title, int size) {
+    public List<MenuDto> findAllNoOffset(Long lastId, Long parentId, Integer depth, String title, int size) {
         return query.select(
                 Projections.fields(
                         MenuDto.class,
@@ -54,6 +49,7 @@ public class QMenuRepositoryImpl implements QMenuRepository{
                 .from(menu)
                 .where(gtLastId(lastId),
                         eqParentId(parentId),
+                        eqDepth(depth),
                         containsTitle(title))
                 .limit(size)
                 .fetch();
