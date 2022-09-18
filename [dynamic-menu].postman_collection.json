@@ -1,0 +1,142 @@
+{
+	"info": {
+		"_postman_id": "1c99fd87-2890-42f8-ad14-2aab029e368c",
+		"name": "[dynamic-menu]",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15894056"
+	},
+	"item": [
+		{
+			"name": "메뉴 단일조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:9090/menu/1",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"menu",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "메뉴 목록조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:9090/menu?size=2",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"menu"
+					],
+					"query": [
+						{
+							"key": "lastId",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "parentId",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "depth",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "메뉴 등록",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"parentId\": null,\n    \"title\": \"테스트2\",\n    \"link\": \"naver.com\",\n    \"description\": \"테스트입니다\",\n    \"banners\": [\n        {\n            \"title\": \"테스트\",\n            \"link\": \"naver.com\",\n            \"description\": \"테스트입니다\",\n            \"imagePath\":\"/foo/bar/abc.jpg\",\n            \"imageWidth\":123,\n            \"imageHeight\":123,\n            \"imageSize\":123\n        },\n        {\n            \"title\": \"테스트2\",\n            \"link\": \"naver.com\",\n            \"description\": \"테스트2입니다\",\n            \"imagePath\":\"/foo/bar/edf.jpg\",\n            \"imageWidth\":456,\n            \"imageHeight\":456,\n            \"imageSize\":456\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/menu",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"menu"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "메뉴 수정",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\":\"abcd\",\n    \"link\":\"abc.com\",\n    \"description\":\"수정\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9090/menu/2",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"menu",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "메뉴 삭제",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:9090/menu/1",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"menu",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
