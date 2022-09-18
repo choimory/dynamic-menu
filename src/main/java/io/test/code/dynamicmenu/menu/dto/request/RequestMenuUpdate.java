@@ -19,7 +19,7 @@ public class RequestMenuUpdate {
     private final String link;
     private final String description;
 
-    public Menu toEntity(Integer calculatedDepth){
+    public Menu toEntity(Integer calculatedDepth, Menu newParent){
         return Menu.builder()
                 .title(title)
                 .link(link)
@@ -27,9 +27,7 @@ public class RequestMenuUpdate {
                 .description(description)
                 .parent(parentId == null
                         ? null
-                        : Menu.builder()
-                        .id(parentId)
-                        .build())
+                        : newParent)
                 .build();
     }
 }

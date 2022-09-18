@@ -81,8 +81,17 @@ public class MenuService {
         /*뎁스 계산*/
         final int calculatedDepth = this.calculateDepth(param.getParentId());
 
+        /*부모 조회*/
+        final Menu newParent = param.getParentId() == null
+                ? null
+                : menuRepository.findById(param.getParentId())
+                .orElseThrow(() -> new CommonException(HttpStatus.NOT_FOUND,
+                        MenuValid.CODE_PARENT_NOT_FOUND,
+                        MenuValid.MESSAGE_PARENT_NOT_FOUND,
+                        MenuValid.MESSAGE_PARENT_NOT_FOUND));
+
         /*수정*/
-        updatedMenu.update(param.toEntity(calculatedDepth));
+        updatedMenu.update(param.toEntity(calculatedDepth, newParent));
 
         /*반환*/
         return ResponseMenuUpdate.builder()
