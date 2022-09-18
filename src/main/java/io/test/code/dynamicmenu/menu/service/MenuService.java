@@ -76,22 +76,12 @@ public class MenuService {
                         HttpStatus.NOT_FOUND.getReasonPhrase()));
 
         /*자식간의 동일 메뉴명 중복 조회*/
-        this.isMenuDuplicate(param.getTitle(), param.getParentId());
-
-        /*뎁스 계산*/
-        final int calculatedDepth = this.calculateDepth(param.getParentId());
-
-        /*부모 조회*/
-        final Menu newParent = param.getParentId() == null
+        this.isMenuDuplicate(param.getTitle(), updatedMenu.getParent() == null
                 ? null
-                : menuRepository.findById(param.getParentId())
-                .orElseThrow(() -> new CommonException(HttpStatus.NOT_FOUND,
-                        MenuValid.CODE_PARENT_NOT_FOUND,
-                        MenuValid.MESSAGE_PARENT_NOT_FOUND,
-                        MenuValid.MESSAGE_PARENT_NOT_FOUND));
+                : updatedMenu.getParent().getId());
 
         /*수정*/
-        updatedMenu.update(param.toEntity(calculatedDepth, newParent));
+        updatedMenu.update(param.toEntity());
 
         /*반환*/
         return ResponseMenuUpdate.builder()

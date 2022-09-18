@@ -12,22 +12,17 @@ import javax.validation.constraints.Null;
 @RequiredArgsConstructor
 @Getter
 public class RequestMenuUpdate {
-    private final Long parentId;
     @NotEmpty
     private final String title;
     @NotEmpty
     private final String link;
     private final String description;
 
-    public Menu toEntity(Integer calculatedDepth, Menu newParent){
+    public Menu toEntity(){
         return Menu.builder()
                 .title(title)
                 .link(link)
-                .depth(calculatedDepth)
                 .description(description)
-                .parent(parentId == null
-                        ? null
-                        : newParent)
                 .build();
     }
 }
