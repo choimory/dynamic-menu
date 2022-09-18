@@ -1,6 +1,7 @@
 package io.test.code.dynamicmenu.common.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,8 +20,8 @@ import java.time.LocalDateTime;
 @Getter
 public class CommonDateTimeEntity implements Serializable {
     @CreatedDate
-    private LocalDateTime createdAt;
+    protected LocalDateTime createdAt;
     @LastModifiedDate
-    private LocalDateTime modifiedAt;
-    private LocalDateTime deletedAt;
+    protected LocalDateTime modifiedAt;
+    protected LocalDateTime deletedAt;
 }
